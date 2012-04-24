@@ -1,0 +1,33 @@
+var compile = function (musexpr) {
+    NOTES = [];
+    startT = {time:0};
+    getNotes(NOTES , startT, 0, musexpr);
+
+    return NOTES;
+};
+
+var getNotes = function(NOTES, startT, isPar, expr){
+    if(expr.tag === 'note')
+    {
+
+        expr.start = startT.time;
+        if(!isPar)
+        {
+            startT.time += expr.dur;
+        }
+        NOTES.push(expr);
+        
+    }
+    if(expr.tag === 'seq')
+    {
+        getNotes(NOTES, startT, 0, expr.left);
+        getNotes(NOTES, startT, 0, expr.right);
+    }
+    if(expr.tag === 'par')
+    {
+        getNotes(NOTES, startT, 1, expr.left);
+        getNotes(NOTES, startT, 0, expr.right);
+    }
+        
+    return NOTES;
+};
